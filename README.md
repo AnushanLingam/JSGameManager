@@ -3,7 +3,7 @@ A set of methods designed to make creating and managing a lobby system for web a
 
 Click [here](https://www.npmjs.com/package/js-gamemanager) to view on npm
 
-Check out a demo using this module [here](https://github.com/AnushanLingam/CloneO)
+Click [here](https://runkit.com/embed/a3aa4buu470o) to play around with this module in your browser with RunKit
 
 #### Requirements
 * NPM and Node.JS
