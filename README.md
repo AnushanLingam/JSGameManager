@@ -1,6 +1,10 @@
 # JSGameManager
 A set of methods designed to make creating and managing a lobby system for web apps or games easily using Socket.IO. 
 
+Click [here](https://www.npmjs.com/package/js-gamemanager) to view on npm
+
+Check out a demo using this module [here](https://github.com/AnushanLingam/CloneO)
+
 #### Requirements
 * NPM and Node.JS
 * Install the Socket.IO module using `install socket.io --save`
