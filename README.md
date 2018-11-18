@@ -3,7 +3,7 @@ A set of functions designed to make creating and managing a lobby system for web
 
 Click [here](https://www.npmjs.com/package/js-gamemanager) to view on npm
 
-Click [here](https://runkit.com/embed/a3aa4buu470o) to play around with this module in your browser with RunKit
+Click [here](https://runkit.com/embed/46zbef780xe7) to play around with this module in your browser with RunKit
 
 #### Requirements
 * NPM and Node.JS
