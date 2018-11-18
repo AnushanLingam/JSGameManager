@@ -7,11 +7,28 @@ module.exports = {
         } else return true
     },
 
+    // Checks if username is taken
+    checkUsername: function(playerName, roomName, activeGames){
+        let playerList = activeGames[roomName].players;
+        for(player in playerList) {
+            if(playerList[player].username == playerName) {
+                return false;
+            }
+        } 
+
+        return true;
+
+    },
+
     // Sets the host of a game instance and returns a new game object
-    createGame: function(hostID){
+    createGame: function(hostID, roomName){
         let game = {
             host: hostID,
-            players: []
+            name: roomName,
+            players: [],
+            toString: function() {
+                return ("Room Name: " + this.name + " | Host ID: " + this.host + " | Players: " + this.players.length );
+            }
         }
         return game;
     },
@@ -21,7 +38,10 @@ module.exports = {
         let player = {
             username: playerName,
             id: socketID,
-            score: 0
+            score: 0,
+            toString: function() {
+                return ("Username: " + this.username + " | Socket ID: " + this.id);
+            }
         }
         return player;
     },
@@ -60,7 +80,36 @@ module.exports = {
         }
     },
 
+    // Generates easily readable string of passed in data.
+    stringifyData: function(data, mode){
+        // "GAMES" "PLAYERS" "ALL"
+        var output = "";
+        if(mode == "GAMES") {
+            output = "Here is a list of active games: \n"
+            for (game in data) {
+               output +=  data[game].toString() + "\n";
+            }
+            return output;
+        } else if(mode == "PLAYERS") {
+            output = "Player Info: \n"
+            for (player in data) {
+                output += data[player].toString() + "\n";
+            }
 
+            return output;
+        } else if(mode == "ALL") {
+            output = "Here is a list of active games and player info: \n"
+            for (game in data) {
+               let output1 =  data[game].toString() + "\n " 
+               let output2 = this.stringifyData(data[game].players, "PLAYERS");
+               output += output1 + "\n" + output2 + "\n ******************* \n" ;
+            }
+
+            return output;
+        } else return "Please choose a mode from the following ['GAMES', 'PLAYERS']";
+
+        
+    }
 
     
 };
