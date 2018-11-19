@@ -115,7 +115,7 @@ The `removePlayer` function is used to update the game object and remove the dis
 For example:
 ```javascript
 let response = manager.getClientType(ID, games); 
-let remainingPlayers = manager.removePlayer(ID, games[response[1].playerList);
+let remainingPlayers = manager.removePlayer(ID, games[response[1].playerList)[0];
 games[response[1]].playerList = remainingPlayers;
 ```
 
