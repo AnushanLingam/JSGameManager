@@ -1,127 +1,115 @@
-class GameManager {
-    constructor() {
-        this.games = [];
-        this.players = [];
-    }
+module.exports = {
+ 
+    // Checks whether an JS Object contains an element with the provided key.
+    doesExist: function(value, obj) {
+        if(obj[value] == null) {
+            return false
+        } else return true
+    },
 
-    addGame(hostID, roomName) {
+    // Checks if username is taken
+    checkUsername: function(playerName, roomName, activeGames){
+        let playerList = activeGames[roomName].players;
+        for(player in playerList) {
+            if(playerList[player].username == playerName) {
+                return false;
+            }
+        } 
+
+        return true;
+
+    },
+
+    // Sets the host of a game instance and returns a new game object
+    createGame: function(hostID, roomName){
         let game = {
             host: hostID,
-            room: roomName,
+            name: roomName,
+            players: [],
+            toString: function() {
+                return ("Room Name: " + this.name + " | Host ID: " + this.host + " | Players: " + this.players.length );
+            }
         }
-        this.games.push(game);
-        return game
-    };
-
-    addPlayer(room, name, socketID) {
-        var player = {
-            username: name,
-            id: socketID,
-            room,
-            score: 0
-        };
-
-        this.players.push(player);
-        return player;
-    };
-
-    removeGame(socketID) {
-        var game = this.getGameByHost(socketID);
-
-        if(game) {
-            this.games = this.games.filter((game) => {
-                return game.host != socketID;
-            });
-        };
-
         return game;
-    };
+    },
 
-    removePlayer(socketID) {
-        var player = this.getPlayerBySocket(socketID);
-
-        if(player) {
-            this.players = this.players.filter((player) => {
-                return player.id != socketID;
-            });
-        };
-
+    // Creates a player object and initialises basic properties
+    createPlayer: function(playerName, socketID){
+        let player = {
+            username: playerName,
+            id: socketID,
+            score: 0,
+            toString: function() {
+                return ("Username: " + this.username + " | Socket ID: " + this.id);
+            }
+        }
         return player;
-    };
+    },
 
-    removeFromRoom(room) {
-        var removedPlayers = [];
-
-        this.players = this.players.filter((player) => {
-            if(player.room === room) {
-                removedPlayers.push(player);
+    // Removes a player from a running game on client disconnect    
+    removePlayer: function(socketId, playerList) {
+        let remainingPlayers = [];
+        let name ="";
+       for (let i = 0; i < playerList.length; i++) {
+            if(playerList[i].id == socketId) {
+                name = playerList[i].username;
+                
             } else {
-                return player;
-            };
-        });
+                remainingPlayers.push(playerList[i]);
+            }
+        } 
 
-        return removedPlayers;
-    };
+        return [remainingPlayers, name];
+    },
 
-    getFromRoom(room) {
+    // Pass in a socketID to determine whether the connected client is a PLAYER or HOST type.
+    getClientType: function(socketId, gameList) {
+        for(let game in gameList) {
+            if(gameList[game].host == socketId) {
+                return ["host", game];
+            }
+        }
 
-        var players = this.players.filter((player) => {
-            return player.room === room;
-        });
+        for(let game in gameList) {
+            let players = gameList[game].players;
+            for(player in players) {
+                if(players[player].id == socketId) {
+                    return ["player", game]; 
+                }
+            }
+        }
+    },
 
-        return players;
-    };
+    // Generates easily readable string of passed in data.
+    stringifyData: function(data, mode){
+        // "GAMES" "PLAYERS" "ALL"
+        var output = "";
+        if(mode == "GAMES") {
+            output = "Here is a list of active games: \n"
+            for (game in data) {
+               output +=  data[game].toString() + "\n";
+            }
+            return output;
+        } else if(mode == "PLAYERS") {
+            output = "Player Info: \n"
+            for (player in data) {
+                output += data[player].toString() + "\n";
+            }
 
-    isHostOrPlayer(socketID) {
-        if(this.getGameByHost(socketID) != undefined) {
-            return "HOST";
-        } else if(this.getPlayerBySocket(socketID) != undefined) {
-            return "PLAYER";
-        } else return "NOTFOUND";
+            return output;
+        } else if(mode == "ALL") {
+            output = "Here is a list of active games and player info: \n"
+            for (game in data) {
+               let output1 =  data[game].toString() + "\n " 
+               let output2 = this.stringifyData(data[game].players, "PLAYERS");
+               output += output1 + "\n" + output2 + "\n ******************* \n" ;
+            }
 
-    };
+            return output;
+        } else return "Please choose a mode from the following ['GAMES', 'PLAYERS']";
 
-    getGameByHost(hostID) {
-        return this.games.filter((game) => {
-            return game.host === hostID;
-        })[0];
-    };
-
-    getGameByRoom(roomName) {
-        return this.games.filter((game) => {
-            return game.room === roomName;
-        })[0];
-    };
-
-    getPlayerBySocket(socketID) {
-        return this.players.filter((player) => {
-            return player.id === socketID;
-        })[0];
-    };
-
-    checkUsername(room, username) {
-        var players = this.getFromRoom(room);
-        var available = true;
-
-        players.filter((player) => {
-            if(player.username === username) {
-                available = false;
-            };
-        });
         
-        return available;
-    };
+    }
 
-    checkRoomName(room) {
-        var game = this.getGameByRoom(room);
-
-        if(game) {
-            return false;
-        } else {
-            return true;
-        };
-
-    };
-}
-
-module.exports = {GameManager}
+    
+};
