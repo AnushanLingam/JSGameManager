@@ -46,7 +46,9 @@ let player = {
 
 #### Usage
 
-Firstly initialise the manager module and create a global object to store all active games:
+The best method is create your own ES6 based class that extends this js-gamemanager which allows you to take advantage of all the prebuilt methods for connecting and managing players while allowing you to add your own methods and data as well as override existing methods to tailor the module for your project. For an example you can view my TriviaGameManager class I built on top of this module for use in a simple quiz multiplayer quiz game here.
+
+Initializing the manager module and creating a global object to store all active games:
 
 ```javascript
 const {GameManager} = require("js-gamemanager");
